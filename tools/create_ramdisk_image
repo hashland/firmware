@@ -1,0 +1,31 @@
+#!/bin/sh
+
+if [ -x $1 ] || [ -x $2 ] || [ -x $3 ]; then
+	echo Usage $0 size_in_kb fs_dir output_file
+	exit 1
+fi
+
+RDSIZE=$1
+ROOTFS=$2
+OUTFILE=$3
+
+TMPDIR=/tmp/initrd
+BLKSIZE=1024
+
+if [ -d $TMPDIR ]; then
+	rm -r $TMPDIR 
+fi
+
+mkdir $TMPDIR
+
+dd if=/dev/zero of=$OUTFILE bs=$BLKSIZE count=$RDSIZE
+
+/sbin/mke2fs -F -m 0 -b $BLKSIZE $OUTFILE $RDSIZE
+
+mount $OUTFILE $TMPDIR -t ext2 -o loop=/dev/loop0
+
+cp -aR $ROOTFS/* $TMPDIR
+
+umount $TMPDIR
+gzip -9 $OUTFILE
+
