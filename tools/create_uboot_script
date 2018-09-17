@@ -1,0 +1,12 @@
+#!/bin/sh
+
+if [ ! -f $1 ] || [ -x $2 ]; then
+	echo $0 input output
+	exit 1
+fi
+
+INPUT=$1
+OUTPUT=$2
+
+mkimage -C none -A arm -T script -d $INPUT $OUTPUT
+
