@@ -1,0 +1,9 @@
+#!/bin/sh
+
+if [ -x $1 ] || [ -x $2 ] || [ -x $3 ] || [ -x $4 ]; then
+	echo Usage $0 kernel_image ramdisk_image dtb output
+	exit 1
+fi
+
+mkimage -A arm -O linux -T multi -a 0x40008000 -e 0x40008000 -C none -n 'Multi Image' -d $1:$2:$3 $4
+
