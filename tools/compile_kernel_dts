@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ -x $1 ]; then
+	echo Usage $0 path_to_dts
+	echo
+	echo run inside linux kernel sources root
+	exit 1
+fi
+
+SRC=$1
+TMP=$(echo $SRC | tr "dts" "tmp.dts")
+DST=$(echo $SRC | tr "dts" "dtb")
+
+cpp -nostdinc -I include -undef -x assembler-with-cpp $SRC > $TMP
+dtc -O dtb -b 0 -o $DST $TMP
+rm $TMP
+
